@@ -62,7 +62,7 @@ tr:nth-child(even){background:rgba(17,24,39,.4);}
 <div class="wrap">
   <div class="header">
     <div class="hbar"></div>
-    <div><h1>師岡ミニバスケットボールクラブ</h1><p>2025-26シーズン　スコア分析　全9試合</p></div>
+    <div><h1>師岡ミニバスケットボールクラブ</h1><p id="game-count">2025-26シーズン　スコア分析</p></div>
   </div>
   <div class="filters">
     <button class="fbtn on" onclick="setFilter('all',this)">全試合</button>
@@ -338,6 +338,7 @@ function buildPlayers(games){
 function rc(r){return r>=90?'var(--gold)':r>=70?'var(--green)':r>=40?'var(--sub)':'var(--red)';}
 
 function render(){
+  document.getElementById('game-count').textContent = `2025-26シーズン　スコア分析　全${GAMES.length}試合`;
   const games=getFiltered();
   const ourT=games.map(g=>S(g.our));
   const oppT=games.map(g=>S(g.opp));
