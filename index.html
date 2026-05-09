@@ -440,10 +440,7 @@ function render(){
     const q3r=qPtsRate(p.name,3,games);
     const q4r=qPtsRate(p.name,4,games);
     const maxQ=Math.max(q1r,q2r,q3r,q4r,0.1);
-    function qcell(v){
-      const col=v===maxQ&&v>0?'var(--gold)':v>0?'var(--green)':'var(--muted)';
-      return `<td style="color:${col};font-weight:${v===maxQ&&v>0?700:400}">${F1(v)}</td>`;
-    }
+    const qcell=v=>{const col=v===maxQ&&v>0?'var(--gold)':v>0?'var(--green)':'var(--muted)';return `<td style="color:${col};font-weight:${v===maxQ&&v>0?700:400}">${F1(v)}</td>`;};
     return `<tr>
       <td style="color:var(--muted)">${p.no}</td>
       <td>${esc(p.name)}</td>
