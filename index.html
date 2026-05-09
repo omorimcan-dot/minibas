@@ -416,7 +416,7 @@ function render(){
   }).join('');
 
   // 試合一覧
-  document.getElementById('glist').innerHTML=games.map(g=>{
+  document.getElementById('glist').innerHTML=[...games].sort((a,b)=>a.date.localeCompare(b.date)).map(g=>{
     const us=S(g.our),them=S(g.opp),win=us>them;
     const col=win?'var(--green)':'var(--red)';
     const top3=g.players.filter(p=>p.pts>0).sort((a,b)=>b.pts-a.pts).slice(0,3).map(p=>`${p.no}番 ${p.pts}点`).join('　');
