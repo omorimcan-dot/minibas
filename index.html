@@ -1,8 +1,516 @@
-<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>師岡ミニバス スコア分析</title><style>:root{--bg:#0A0E17;--card:#1a2235;--border:#2a3a52;--green:#34D399;--red:#F87171;--gold:#FBBF24;--blue:#38BDF8;--text:#F1F5F9;--muted:#64748B;--sub:#94A3B8;}*{box-sizing:border-box;margin:0;padding:0;}body{background:var(--bg);color:var(--text);font-family:'Hiragino Sans','Noto Sans JP',sans-serif;min-height:100vh;}.wrap{max-width:900px;margin:0 auto;padding:18px 13px 40px;}.header{display:flex;align-items:center;gap:12px;margin-bottom:18px;}.hbar{width:4px;height:34px;background:var(--green);border-radius:2px;}.header h1{font-size:17px;font-weight:900;}.header p{color:var(--muted);font-size:11px;margin-top:2px;}.filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:13px;}.fbtn{background:var(--card);border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:5px 13px;cursor:pointer;font-size:12px;font-family:inherit;}.fbtn.on{background:rgba(56,189,248,.15);border-color:var(--blue);color:var(--blue);font-weight:700;}.tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:16px;overflow-x:auto;}.tbtn{background:none;border:none;cursor:pointer;padding:8px 13px;color:var(--muted);font-size:12px;font-family:inherit;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;}.tbtn.on{color:var(--text);font-weight:700;border-bottom-color:var(--blue);}.panel{display:none;}.panel.on{display:block;}.krow{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}.kpi{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;flex:1;min-width:85px;}.klbl{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;}.kval{font-size:24px;font-weight:800​​​​​​​​​​​​​​​​
-<body><div class="wrap"><div class="header"><div class="hbar"></div><div><h1>師岡ミニバスケットボールクラブ</h1><p>2025-26シーズン　スコア分析　全9試合</p></div></div><div class="filters"><button class="fbtn on" onclick="setFilter('all',this)">全試合</button><button class="fbtn" onclick="setFilter('league',this)">リーグ戦</button><button class="fbtn" onclick="setFilter('official',this)">公式戦</button><button class="fbtn" onclick="setFilter('practice',this)">練習試合</button></div><div class="tabs"><button class="tbtn on" onclick="setTab('dash',this)">ダッシュボード</button><button class="tbtn" onclick="setTab('games',this)">試合一覧</<script>const GAMES=[{id:1,date:"2026-03-28",tournament:"練習試合",opponent:"若葉台MBC",our:[7,20,21,13],opp:[17,5,8,16],players:[{name​​​​​​​​​​​​​​​​
-button><button class="tbtn" onclick="setTab('scoring',this)">得点分析</button><button class="tbtn" onclick="setTab('fouls',this)">ファール分析</button><button class="tbtn" onclick="setTab('qana',this)">Q別分析</button></div><div id="panel-dash" class="panel on"><div class="krow" id="krow"></div><div class="charts"><div class="cbox"><div class="ctitle">クォーター別 平均得点</div><div class="barwrap" id="qchart"></div><div class="leg"><div class="legitem"><div class="legdot" style="background:var(--green)"></div>自チーム</div><div class="legitem"><div class="legdot" style="background:var(--muted);opacity:.5"></div>相手</div></div></div><div class="cbox"><div class="ctitle">試合別スコア推移</div><div class="trendwrap" id="trend"></div></div></div><div class="qdtl"><div class="ctitle">クォーター別 合計・得​​​​​​​​​​​​​​​​
-{id:5,date:"2026-04-05",tournament:"練習試合",opponent:"柏尾MBC",our:[3,0,2,6],opp:[14,22,11,13],players:[{name:"長島 悠const S=a=>a.reduce((x,y)=>x+y,0);const AVG=a=>a.length?S(a)/a.length:0;const PCT=(n,d)=>d?Math.round(n/d*100):0;const F1=n=>Number(n).toFixed(1);const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;');let curFilter='all';function getFiltered(){if(curFilter==='league')return GAMES.filter(g=>g.tournament==='リーグ戦');if(curFilter==='official')return GAMES.filter(g​​​​​​​​​​​​​​​​
-來",no:4,q:[1],f:1,pts:4},{name:"大森 祐芽",no:5,q:[1],f:1,pts:4},{name:"町田 陽亮",no:6,q:[1,3],f:0,pts:6},{name:"熊谷 颯吾",no:8,q:[1,4],f:0,pts:4},{name:"王田 悠馬",no:9,q:[],f:0,pts:0},{name:"水澤 怜",no:10,q:[2,4],f:1,pts:15},{name:"横山 簗俐",no:11,q:[2,3],f:5,pts:6},{name:"羽淵 凜太朗",no:12,q:[2,3,4],f:0,pts:10},{name:"橋本 瑛二",no:13,q:[2,3],​​​​​​​​​​​​​​​​
-function render(){const games=getFiltered();const document.getElementById('glist').innerHTML=games.map(g=>{const us=S(g.our),them=S(g.opp),win=us>them;const col=win?'var(--green)':'var(--red)';const top3=g.players.filter(p=>p.pts>0).sort((a,b)=>b.pts-a.pts).slice(0,3).map(p=>`${p.no}番 ${p.pts}点`).join('　');return `<div class="gcard"
-ourT=games.map(g=>S(g.our));const oppT=games.map(g=>S(g.opp));const wins=games.filter((_,i)=>ourT[i]>oppT[i]).length;const diff=AVG(ourT)-AVG(oppT);const players=buildPlayers(games);const wc=wins>=games.length-wins?'var(--green)':'var(--red)';document.getElementById('krow').innerHTML=`<div class="kpi"><div class="klbl​​​​​​​​​​​​​​​​
-const foulPlayers=[...players].filter(p=>p.gp>0).sort((a,b)=>b.avgF-a.avgF);document.getElementById('foul-title').textContent=`ファール分析（${games.length}試合・F率高い順）`;document.getElementById('foul-tbody').innerHTML=foulPlayers.map(p=>{const totalQ=games.reduce((s,g)=>{const pl=g.players.find(x=>x.name===p.name);return s+(pl?pl.q.length:0);},0);const f​​​​​​​​​​​​​​​​Rate*100).toFixed(0)}%</td><td style="color:${fc};font-size:11px">${label}</td></tr>`;}).join('');document.getElementById('qapp').innerHTML=players.map(p=>`<tr><td style="color:var(--muted)">${p.no}</td><td>${esc(p.name)}</td><td style="color:${rc(p.q1r)};font-weight:700">${p.q1r}%</td><td style="color:${rc(p.q2r)};font-weight:700">${p.q2r}%</td><td style="color:${rc(p.q3r)};font-weight:700">${p.q3r}%</td><td style="color:${rc(p.q4r)};font-weight:700">${p.q4r}%</td></tr>`).join('');document.getElementById('qscore').innerHTML=games.map((g,i)=>{const us=ourT[i],them=oppT[i],win=us>them;const col=win?'var(--green)':'var(--red)';return `<tr><td style="color:var(--muted)">G${i+1}</td><td style="text-align:left;font-size:11px">${esc(g.opponent)}</td>${g.our.map((q,qi)=>{const d=q-g.opp[qi];return `<td style="color:${d>0?'var(--green)':d<0?'var(--red)':'var(--sub)'}">${q}<span style="color:var(--muted);font-size:9px">(${d>=0?'+':''}${d})</span></td>`;}).join('')}<td style="color:${col};font-weight:700">${us}-${them}</td><td><span class="pill" style="color:${col};background:${col}20;border-color:${col}40">${win?'勝':'負'}</span></td></tr>`;}).join('');}function setFilter(v,btn){curFilter=v;document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');render();}function setTab(v,btn){document.querySelectorAll('.tbtn').forEach(b=>b.classList.remove('on'));document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));btn.classList.add('on');document.getElementById('panel-'+v).classList.add('on');}render();</script></body></html>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>師岡ミニバス スコア分析</title>
+<style>
+:root{--bg:#0A0E17;--card:#1a2235;--border:#2a3a52;--green:#34D399;--red:#F87171;--gold:#FBBF24;--blue:#38BDF8;--text:#F1F5F9;--muted:#64748B;--sub:#94A3B8;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Hiragino Sans','Noto Sans JP',sans-serif;min-height:100vh;}
+.wrap{max-width:900px;margin:0 auto;padding:18px 13px 40px;}
+.header{display:flex;align-items:center;gap:12px;margin-bottom:18px;}
+.hbar{width:4px;height:34px;background:var(--green);border-radius:2px;}
+.header h1{font-size:17px;font-weight:900;}
+.header p{color:var(--muted);font-size:11px;margin-top:2px;}
+.filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:13px;}
+.fbtn{background:var(--card);border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:5px 13px;cursor:pointer;font-size:12px;font-family:inherit;}
+.fbtn.on{background:rgba(56,189,248,.15);border-color:var(--blue);color:var(--blue);font-weight:700;}
+.tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:16px;overflow-x:auto;}
+.tbtn{background:none;border:none;cursor:pointer;padding:8px 13px;color:var(--muted);font-size:12px;font-family:inherit;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;}
+.tbtn.on{color:var(--text);font-weight:700;border-bottom-color:var(--blue);}
+.panel{display:none;}.panel.on{display:block;}
+.krow{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;flex:1;min-width:85px;}
+.klbl{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;}
+.kval{font-size:24px;font-weight:800;line-height:1.1;}
+.ksub{color:var(--muted);font-size:11px;margin-top:3px;}
+.charts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+@media(max-width:500px){.charts{grid-template-columns:1fr;}}
+.cbox{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;}
+.ctitle{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;}
+.barwrap{display:flex;gap:14px;align-items:flex-end;height:100px;}
+.bgrp{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.bars{display:flex;gap:3px;align-items:flex-end;height:74px;}
+.bar{border-radius:3px 3px 0 0;min-height:2px;}
+.leg{display:flex;gap:12px;margin-top:8px;}
+.legitem{display:flex;align-items:center;gap:5px;color:var(--muted);font-size:11px;}
+.legdot{width:8px;height:8px;border-radius:2px;}
+.trendwrap{display:flex;gap:4px;align-items:flex-end;height:100px;}
+.tcol{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;}
+.qdtl{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px;}
+.qcols{display:flex;}
+.qcol{flex:1;padding:8px 0;border-right:1px solid var(--border);text-align:center;}
+.qcol:last-child{border-right:none;}
+.glist{display:flex;flex-direction:column;gap:7px;}
+.gcard{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:11px 13px;border-left-width:3px;border-left-style:solid;}
+.pill{border-radius:4px;padding:1px 7px;font-size:11px;font-weight:700;border-width:1px;border-style:solid;display:inline-block;}
+.pbox{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px;overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:11px;}
+th{color:var(--muted);padding:5px 6px;font-weight:500;border-bottom:1px solid var(--border);white-space:nowrap;text-align:right;}
+th:nth-child(2){text-align:left;}
+td{padding:7px 6px;border-bottom:1px solid rgba(42,58,82,.4);white-space:nowrap;text-align:right;}
+td:nth-child(2){text-align:left;font-weight:600;}
+tr:last-child td{border-bottom:none;}
+tr:nth-child(even){background:rgba(17,24,39,.4);}
+.note{color:var(--muted);font-size:10px;margin-top:8px;}
+.qbar-row{display:flex;gap:3px;margin-top:2px;}
+.qbar{height:6px;border-radius:2px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div class="hbar"></div>
+    <div><h1>師岡ミニバスケットボールクラブ</h1><p>2025-26シーズン　スコア分析　全9試合</p></div>
+  </div>
+  <div class="filters">
+    <button class="fbtn on" onclick="setFilter('all',this)">全試合</button>
+    <button class="fbtn" onclick="setFilter('league',this)">リーグ戦</button>
+    <button class="fbtn" onclick="setFilter('official',this)">公式戦</button>
+    <button class="fbtn" onclick="setFilter('practice',this)">練習試合</button>
+  </div>
+  <div class="tabs">
+    <button class="tbtn on" onclick="setTab('dash',this)">ダッシュボード</button>
+    <button class="tbtn" onclick="setTab('games',this)">試合一覧</button>
+    <button class="tbtn" onclick="setTab('scoring',this)">得点分析</button>
+    <button class="tbtn" onclick="setTab('fouls',this)">ファール分析</button>
+    <button class="tbtn" onclick="setTab('qana',this)">Q別分析</button>
+  </div>
+
+  <div id="panel-dash" class="panel on">
+    <div class="krow" id="krow"></div>
+    <div class="charts">
+      <div class="cbox">
+        <div class="ctitle">クォーター別 平均得点</div>
+        <div class="barwrap" id="qchart"></div>
+        <div class="leg">
+          <div class="legitem"><div class="legdot" style="background:var(--green)"></div>自チーム</div>
+          <div class="legitem"><div class="legdot" style="background:var(--muted);opacity:.5"></div>相手</div>
+        </div>
+      </div>
+      <div class="cbox">
+        <div class="ctitle">試合別スコア推移</div>
+        <div class="trendwrap" id="trend"></div>
+      </div>
+    </div>
+    <div class="qdtl">
+      <div class="ctitle">クォーター別 合計・得失点差</div>
+      <div class="qcols" id="qdtl"></div>
+    </div>
+  </div>
+
+  <div id="panel-games" class="panel">
+    <div class="glist" id="glist"></div>
+  </div>
+
+  <!-- 得点分析 -->
+  <div id="panel-scoring" class="panel">
+    <div class="pbox">
+      <div class="ctitle" id="score-title">得点分析（総得点順）</div>
+      <table>
+        <thead><tr><th>#</th><th>選手名</th><th>出場</th><th>総得点</th><th>平均得点</th><th>Q1得点率</th><th>Q2得点率</th><th>Q3得点率</th><th>Q4得点率</th></tr></thead>
+        <tbody id="score-tbody"></tbody>
+      </table>
+      <div class="note">※ Q別得点率 = そのQの出場試合での平均得点（出場Qのみ集計）</div>
+    </div>
+  </div>
+
+  <!-- ファール分析 -->
+  <div id="panel-fouls" class="panel">
+    <div class="pbox">
+      <div class="ctitle" id="foul-title">ファール分析（ファール率高い順）</div>
+      <table>
+        <thead><tr><th>#</th><th>選手名</th><th>出場</th><th>総ファール</th><th>平均F/試合</th><th>F率</th><th>判定</th></tr></thead>
+        <tbody id="foul-tbody"></tbody>
+      </table>
+      <div class="note">※ F率 = 総ファール ÷ 総出場Q数</div>
+    </div>
+  </div>
+
+  <div id="panel-qana" class="panel">
+    <div class="pbox">
+      <div class="ctitle">Q別 出場率</div>
+      <table>
+        <thead><tr><th>#</th><th>選手名</th><th>Q1出場率</th><th>Q2出場率</th><th>Q3出場率</th><th>Q4出場率</th></tr></thead>
+        <tbody id="qapp"></tbody>
+      </table>
+    </div>
+    <div class="pbox">
+      <div class="ctitle">チーム Q別 得失点詳細</div>
+      <table>
+        <thead><tr><th>G</th><th>対戦相手</th><th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th><th>合計</th><th>結果</th></tr></thead>
+        <tbody id="qscore"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+const GAMES=[
+  {id:1,date:"2026-03-28",tournament:"練習試合",opponent:"若葉台MBC",our:[7,20,21,13],opp:[17,5,8,16],
+   players:[
+    {name:"長島 悠來",no:4,q:[2,3,4],f:0,pts:0},
+    {name:"大森 祐芽",no:5,q:[1,2,3],f:1,pts:0},
+    {name:"町田 陽亮",no:6,q:[1,2],f:2,pts:0},
+    {name:"熊谷 颯吾",no:8,q:[2,3],f:1,pts:0},
+    {name:"王田 悠馬",no:9,q:[1],f:0,pts:0},
+    {name:"水澤 怜",no:10,q:[2,3,4],f:0,pts:0},
+    {name:"横山 簗俐",no:11,q:[2,3,4],f:4,pts:0},
+    {name:"橋本 瑛二",no:13,q:[3,4],f:0,pts:0},
+    {name:"江口 結陽",no:14,q:[1,2,3],f:0,pts:0},
+    {name:"山口 武琉",no:15,q:[3,4],f:0,pts:0},
+    {name:"恒村 京助",no:16,q:[4],f:0,pts:0},
+    {name:"秋田 瑛介",no:18,q:[1,4],f:1,pts:0},
+   ]},
+  {id:2,date:"2026-03-28",tournament:"練習試合",opponent:"十日市場",our:[8,18,16,20],opp:[11,6,8,8],
+   players:[
+    {name:"長島 悠來",no:4,q:[1,3,4],f:1,pts:12},
+    {name:"大森 祐芽",no:5,q:[1,3,4],f:3,pts:6},
+    {name:"町田 陽亮",no:6,q:[1,4],f:0,pts:0},
+    {name:"熊谷 颯吾",no:8,q:[2,4],f:1,pts:0},
+    {name:"王田 悠馬",no:9,q:[2],f:0,pts:0},
+    {name:"水澤 怜",no:10,q:[2,3,4],f:0,pts:14},
+    {name:"横山 簗俐",no:11,q:[1,3,4],f:4,pts:14},
+    {name:"橋本 瑛二",no:13,q:[],f:0,pts:0},
+    {name:"江口 結陽",no:14,q:[2,3,4],f:1,pts:6},
+    {name:"山口 武琉",no:15,q:[],f:0,pts:0},
+    {name:"恒村 京助",no:16,q:[1],f:0,pts:2},
+    {name:"秋田 瑛介",no:18,q:[2],f:0,pts:8},
+   ]},
+  {id:3,date:"2026-03-29",tournament:"練習試合",opponent:"西寺尾第二MBC①",our:[6,6,19,13],opp:[10,12,18,15],
+   players:[
+    {name:"長島 悠來",no:4,q:[1,3,4],f:0,pts:0},
+    {name:"大森 祐芽",no:5,q:[1,3,4],f:0,pts:10},
+    {name:"町田 陽亮",no:6,q:[1],f:0,pts:2},
+    {name:"熊谷 颯吾",no:8,q:[2],f:0,pts:0},
+    {name:"王田 悠馬",no:9,q:[1],f:0,pts:0},
+    {name:"水澤 怜",no:10,q:[2,3,4],f:0,pts:10},
+    {name:"横山 簗俐",no:11,q:[1,3,4],f:2,pts:8},
+    {name:"羽淵 凜太朗",no:12,q:[1],f:0,pts:2},
+    {name:"橋本 瑛二",no:13,q:[],f:0,pts:0},
+    {name:"江口 結陽",no:14,q:[2,3,4],f:2,pts:8},
+    {name:"山口 武琉",no:15,q:[],f:0,pts:0},
+    {name:"恒村 京助",no:16,q:[],f:0,pts:0},
+    {name:"秋田 瑛介",no:18,q:[2],f:0,pts:4},
+   ]},
+  {id:4,date:"2026-03-29",tournament:"練習試合",opponent:"西寺尾第二MBC②",our:[8,3,8,9],opp:[9,24,14,20],
+   players:[
+    {name:"長島 悠來",no:4,q:[1,3,4],f:0,pts:4},
+    {name:"大森 祐芽",no:5,q:[1,3,4],f:4,pts:4},
+    {name:"町田 陽亮",no:6,q:[1],f:1,pts:0},
+    {name:"熊谷 颯吾",no:8,q:[2],f:0,pts:2},
+    {name:"王田 悠馬",no:9,q:[1],f:1,pts:0},
+    {name:"水澤 怜",no:10,q:[2,3,4],f:0,pts:3},
+    {name:"横山 簗俐",no:11,q:[1,3,4],f:2,pts:7},
+    {name:"羽淵 凜太朗",no:12,q:[2],f:0,pts:0},
+    {name:"橋本 瑛二",no:13,q:[],f:0,pts:0},
+    {name:"江口 結陽",no:14,q:[2,3,4],f:1,pts:8},
+    {name:"山口 武琉",no:15,q:[],f:0,pts:0},
+    {name:"恒村 京助",no:16,q:[],f:0,pts:0},
+    {name:"秋田 瑛介",no:18,q:[2],f:2,pts:0},
+   ]},
+  {id:5,date:"2026-04-05",tournament:"練習試合",opponent:"柏尾MBC",our:[3,0,2,6],opp:[14,22,11,13],
+   players:[
+    {name:"長島 悠來",no:4,q:[1],f:1,pts:4},
+    {name:"大森 祐芽",no:5,q:[1],f:1,pts:4},
+    {name:"町田 陽亮",no:6,q:[1,3],f:0,pts:6},
+    {name:"熊谷 颯吾",no:8,q:[1,4],f:0,pts:4},
+    {name:"王田 悠馬",no:9,q:[],f:0,pts:0},
+    {name:"水澤 怜",no:10,q:[2,4],f:1,pts:15},
+    {name:"横山 簗俐",no:11,q:[2,3],f:5,pts:6},
+    {name:"羽淵 凜太朗",no:12,q:[2,3,4],f:0,pts:10},
+    {name:"橋本 瑛二",no:13,q:[2,3],f:0,pts:0},
+    {name:"江口 結陽",no:14,q:[2,3],f:0,pts:6},
+    {name:"山口 武琉",no:15,q:[3,4],f:0,pts:3},
+    {name:"恒村 京助",no:16,q:[1,4],f:2,pts:2},
+    {name:"秋田 瑛介",no:18,q:[],f:0,pts:0},
+   ]},
+  {id:6,date:"2026-04-05",tournament:"練習試合",opponent:"羽沢南MBC",our:[11,4,8,18],opp:[12,16,13,15],
+   players:[
+    {name:"長島 悠來",no:4,q:[1,3,4],f:1,pts:4},
+    {name:"大森 祐芽",no:5,q:[1,3,4],f:4,pts:6},
+    {name:"町田 陽亮",no:6,q:[1],f:0,pts:0},
+    {name:"熊谷 颯吾",no:8,q:[1],f:0,pts:2},
+    {name:"王田 悠馬",no:9,q:[],f:0,pts:0},
+    {name:"水澤 怜",no:10,q:[2,3,4],f:0,pts:22},
+    {name:"横山 簗俐",no:11,q:[2,3,4],f:0,pts:8},
+    {name:"羽淵 凜太朗",no:12,q:[2],f:1,pts:0},
+    {name:"橋本 瑛二",no:13,q:[2],f:0,pts:2},
+    {name:"江口 結陽",no:14,q:[2,3,4],f:0,pts:8},
+    {name:"山口 武琉",no:15,q:[],f:0,pts:0},
+    {name:"恒村 京助",no:16,q:[1],f:0,pts:4},
+    {name:"秋田 瑛介",no:18,q:[],f:0,pts:0},
+   ]},
+  {id:7,date:"2026-04-26",tournament:"春季大会",opponent:"十日市場",our:[13,6,15,7],opp:[10,17,17,10],
+   players:[
+    {name:"長島 悠來",no:4,q:[1,3,4],f:2,pts:6},
+    {name:"大森 祐芽",no:5,q:[1,3,4],f:2,pts:7},
+    {name:"町田 陽亮",no:6,q:[2],f:1,pts:0},
+    {name:"熊谷 颯吾",no:8,q:[1],f:0,pts:0},
+    {name:"王田 悠馬",no:9,q:[1],f:0,pts:0},
+    {name:"水澤 怜",no:10,q:[2,3,4],f:1,pts:8},
+    {name:"横山 簗俐",no:11,q:[1,3,4],f:2,pts:10},
+    {name:"羽淵 凜太朗",no:12,q:[2],f:1,pts:4},
+    {name:"橋本 瑛二",no:13,q:[],f:0,pts:0},
+    {name:"江口 結陽",no:14,q:[2,3,4],f:2,pts:6},
+    {name:"山口 武琉",no:15,q:[],f:0,pts:0},
+    {name:"恒村 京助",no:16,q:[],f:0,pts:0},
+    {name:"秋田 瑛介",no:18,q:[2],f:1,pts:0},
+   ]},
+  {id:8,date:"2026-05-05",tournament:"リーグ戦",opponent:"駒岡",our:[15,6,10,12],opp:[20,11,18,13],
+   players:[
+    {name:"長島 悠來",no:4,q:[1,3,4],f:0,pts:8},
+    {name:"大森 祐芽",no:5,q:[1,3,4],f:2,pts:17},
+    {name:"町田 陽亮",no:6,q:[1],f:0,pts:0},
+    {name:"熊谷 颯吾",no:8,q:[1],f:1,pts:0},
+    {name:"王田 悠馬",no:9,q:[1],f:0,pts:0},
+    {name:"水澤 怜",no:10,q:[],f:0,pts:0},
+    {name:"横山 簗俐",no:11,q:[2,3,4],f:2,pts:6},
+    {name:"羽淵 凜太朗",no:12,q:[2],f:1,pts:2},
+    {name:"橋本 瑛二",no:13,q:[2],f:0,pts:0},
+    {name:"江口 結陽",no:14,q:[2,3,4],f:1,pts:0},
+    {name:"山口 武琉",no:15,q:[],f:0,pts:0},
+    {name:"恒村 京助",no:16,q:[],f:0,pts:0},
+    {name:"秋田 瑛介",no:18,q:[2,3,4],f:1,pts:10},
+   ]},
+  {id:9,date:"2026-05-05",tournament:"リーグ戦",opponent:"レッズ宮前MBC",our:[16,7,4,4],opp:[8,18,16,15],
+   players:[
+    {name:"長島 悠來",no:4,q:[1,3,4],f:0,pts:10},
+    {name:"大森 祐芽",no:5,q:[1,3,4],f:2,pts:6},
+    {name:"町田 陽亮",no:6,q:[1,4],f:0,pts:0},
+    {name:"熊谷 颯吾",no:8,q:[1],f:0,pts:0},
+    {name:"王田 悠馬",no:9,q:[1],f:0,pts:0},
+    {name:"水澤 怜",no:10,q:[],f:0,pts:0},
+    {name:"横山 簗俐",no:11,q:[2,3,4],f:0,pts:12},
+    {name:"羽淵 凜太朗",no:12,q:[2],f:0,pts:0},
+    {name:"橋本 瑛二",no:13,q:[],f:0,pts:0},
+    {name:"江口 結陽",no:14,q:[2,3,4],f:1,pts:2},
+    {name:"山口 武琉",no:15,q:[],f:0,pts:0},
+    {name:"恒村 京助",no:16,q:[2],f:1,pts:0},
+    {name:"秋田 瑛介",no:18,q:[2,3,4],f:1,pts:3},
+   ]},
+];
+
+const S=a=>a.reduce((x,y)=>x+y,0);
+const AVG=a=>a.length?S(a)/a.length:0;
+const PCT=(n,d)=>d?Math.round(n/d*100):0;
+const F1=n=>Number(n).toFixed(1);
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+let curFilter='all';
+
+function getFiltered(){
+  if(curFilter==='league') return GAMES.filter(g=>g.tournament==='リーグ戦');
+  if(curFilter==='official') return GAMES.filter(g=>g.tournament!=='練習試合');
+  if(curFilter==='practice') return GAMES.filter(g=>g.tournament==='練習試合');
+  return GAMES;
+}
+
+function buildPlayers(games){
+  const m={};
+  games.forEach(g=>{
+    g.players.forEach(p=>{
+      if(!p.q.length && p.pts===0 && p.f===0) return;
+      if(!m[p.name]) m[p.name]={name:p.name,no:p.no,gp:0,totalQ:0,totalF:0,totalPts:0,q1:0,q2:0,q3:0,q4:0};
+      if(p.q.length>0) m[p.name].gp++;
+      m[p.name].totalQ+=p.q.length;
+      m[p.name].totalF+=p.f;
+      m[p.name].totalPts+=p.pts;
+      if(p.q.includes(1))m[p.name].q1++;
+      if(p.q.includes(2))m[p.name].q2++;
+      if(p.q.includes(3))m[p.name].q3++;
+      if(p.q.includes(4))m[p.name].q4++;
+    });
+  });
+  return Object.values(m).map(p=>({
+    ...p,
+    rate:PCT(p.gp,games.length),
+    avgQ:p.gp?p.totalQ/p.gp:0,
+    avgF:p.gp?p.totalF/p.gp:0,
+    avgPts:p.gp?p.totalPts/p.gp:0,
+    q1r:PCT(p.q1,games.length),
+    q2r:PCT(p.q2,games.length),
+    q3r:PCT(p.q3,games.length),
+    q4r:PCT(p.q4,games.length),
+  })).sort((a,b)=>b.totalPts-a.totalPts||a.no-b.no);
+}
+
+function rc(r){return r>=90?'var(--gold)':r>=70?'var(--green)':r>=40?'var(--sub)':'var(--red)';}
+
+function render(){
+  const games=getFiltered();
+  const ourT=games.map(g=>S(g.our));
+  const oppT=games.map(g=>S(g.opp));
+  const wins=games.filter((_,i)=>ourT[i]>oppT[i]).length;
+  const diff=AVG(ourT)-AVG(oppT);
+  const players=buildPlayers(games);
+  const totalPts=S(players.map(p=>p.totalPts));
+
+  // KPI
+  const wc=wins>=games.length-wins?'var(--green)':'var(--red)';
+  document.getElementById('krow').innerHTML=`
+    <div class="kpi"><div class="klbl">対戦成績</div><div class="kval" style="color:${wc}">${wins}勝${games.length-wins}敗</div><div class="ksub">勝率 ${PCT(wins,games.length)}%</div></div>
+    <div class="kpi"><div class="klbl">平均得点</div><div class="kval">${F1(AVG(ourT))}</div><div class="ksub">平均失点 ${F1(AVG(oppT))}</div></div>
+    <div class="kpi"><div class="klbl">得失点差</div><div class="kval" style="color:${diff>=0?'var(--green)':'var(--red)'}">${diff>=0?'+':''}${F1(diff)}</div><div class="ksub">1試合平均</div></div>
+    <div class="kpi"><div class="klbl">最高/最低</div><div class="kval">${Math.max(...ourT)}</div><div class="ksub">最低 ${Math.min(...ourT)}</div></div>
+    <div class="kpi"><div class="klbl">試合数</div><div class="kval">${games.length}</div><div class="ksub">試合</div></div>
+  `;
+
+  // Qチャート
+  const qAvg=[0,1,2,3].map(q=>({q:q+1,our:AVG(games.map(g=>g.our[q])),opp:AVG(games.map(g=>g.opp[q]))}));
+  const maxQ=Math.max(...qAvg.flatMap(q=>[q.our,q.opp]),1);
+  document.getElementById('qchart').innerHTML=qAvg.map(q=>`
+    <div class="bgrp">
+      <div class="bars">
+        <div class="bar" style="width:22px;background:var(--green);height:${Math.max(2,(q.our/maxQ)*72)}px"></div>
+        <div class="bar" style="width:22px;background:var(--muted);opacity:.45;height:${Math.max(2,(q.opp/maxQ)*72)}px"></div>
+      </div>
+      <div style="color:var(--muted);font-size:11px">Q${q.q}</div>
+      <div style="color:var(--green);font-size:10px;font-weight:700">${F1(q.our)}</div>
+      <div style="color:var(--muted);font-size:10px">${F1(q.opp)}</div>
+    </div>`).join('');
+
+  // トレンド
+  const maxT=Math.max(...ourT,...oppT,1);
+  document.getElementById('trend').innerHTML=games.map((g,i)=>{
+    const win=ourT[i]>oppT[i];
+    return `<div class="tcol">
+      <div style="display:flex;gap:2px;align-items:flex-end;height:74px">
+        <div class="bar" style="width:12px;background:${win?'var(--green)':'var(--red)'};height:${Math.max(3,(ourT[i]/maxT)*72)}px"></div>
+        <div class="bar" style="width:12px;background:var(--muted);opacity:.4;height:${Math.max(3,(oppT[i]/maxT)*72)}px"></div>
+      </div>
+      <div style="color:var(--muted);font-size:9px">G${i+1}</div>
+      <div style="color:${win?'var(--green)':'var(--red)'};font-size:9px;font-weight:700">${ourT[i]}</div>
+    </div>`;
+  }).join('');
+
+  // Q合計
+  document.getElementById('qdtl').innerHTML=[0,1,2,3].map(q=>{
+    const os=S(games.map(g=>g.our[q]));
+    const op=S(games.map(g=>g.opp[q]));
+    const d=os-op;
+    return `<div class="qcol">
+      <div style="color:var(--muted);font-size:12px;margin-bottom:5px">Q${q+1}</div>
+      <div style="color:var(--green);font-weight:800;font-size:20px">${os}</div>
+      <div style="color:var(--muted);font-size:12px;margin-top:2px">${op}</div>
+      <div style="color:${d>=0?'var(--green)':'var(--red)'};font-size:11px;font-weight:700;margin-top:4px">${d>=0?'+':''}${d}</div>
+      <div style="color:var(--muted);font-size:10px;margin-top:2px">avg ${F1(AVG(games.map(g=>g.our[q])))}</div>
+    </div>`;
+  }).join('');
+
+  // 試合一覧
+  document.getElementById('glist').innerHTML=games.map(g=>{
+    const us=S(g.our),them=S(g.opp),win=us>them;
+    const col=win?'var(--green)':'var(--red)';
+    const top3=g.players.filter(p=>p.pts>0).sort((a,b)=>b.pts-a.pts).slice(0,3).map(p=>`${p.no}番 ${p.pts}点`).join('　');
+    return `<div class="gcard" style="border-left-color:${col}">
+      <div style="display:flex;align-items:center;gap:9px">
+        <span class="pill" style="color:${col};background:${col}20;border-color:${col}40">${win?'勝':'負'}</span>
+        <div style="flex:1">
+          <div style="color:var(--text);font-size:13px;font-weight:700">vs ${esc(g.opponent)}<span style="color:var(--muted);font-weight:400;font-size:11px;margin-left:6px">${g.tournament}　${g.date}</span></div>
+          <div style="color:var(--muted);font-size:12px;margin-top:3px">${g.our.join(' - ')} ＝ <span style="color:${col};font-weight:700;font-size:13px">${us}</span><span style="margin:0 6px;color:var(--border)">|</span>相手 ${g.opp.join(' - ')} ＝ ${them}</div>
+          ${top3?`<div style="color:var(--sub);font-size:11px;margin-top:3px">🏀 ${top3}</div>`:''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // 得点分析（総得点順）
+  const scorePlayers=[...players].sort((a,b)=>b.totalPts-a.totalPts);
+  document.getElementById('score-title').textContent=`得点分析（${games.length}試合・総得点順）`;
+
+  // Q別得点率計算（出場したQごとの平均得点）
+  function qPtsRate(playerName, qNum, games){
+    let totalPts=0, count=0;
+    games.forEach(g=>{
+      const p=g.players.find(x=>x.name===playerName);
+      if(p && p.q.includes(qNum)){
+        // そのQの得点を按分（出場Q数で割る）
+        const pts = p.q.length>0 ? p.pts/p.q.length : 0;
+        totalPts+=pts; count++;
+      }
+    });
+    return count>0?totalPts/count:0;
+  }
+
+  document.getElementById('score-tbody').innerHTML=scorePlayers.map(p=>{
+    const pc=p.totalPts>=50?'var(--gold)':p.totalPts>=30?'var(--green)':'var(--text)';
+    const q1r=qPtsRate(p.name,1,games);
+    const q2r=qPtsRate(p.name,2,games);
+    const q3r=qPtsRate(p.name,3,games);
+    const q4r=qPtsRate(p.name,4,games);
+    const maxQ=Math.max(q1r,q2r,q3r,q4r,0.1);
+    function qcell(v){
+      const col=v===maxQ&&v>0?'var(--gold)':v>0?'var(--green)':'var(--muted)';
+      return `<td style="color:${col};font-weight:${v===maxQ&&v>0?700:400}">${F1(v)}</td>`;
+    }
+    return `<tr>
+      <td style="color:var(--muted)">${p.no}</td>
+      <td>${esc(p.name)}</td>
+      <td style="color:${rc(p.rate)}">${p.gp}/${games.length}</td>
+      <td style="color:${pc};font-weight:700;font-size:13px">${p.totalPts}</td>
+      <td style="color:${pc}">${F1(p.avgPts)}</td>
+      ${qcell(q1r)}${qcell(q2r)}${qcell(q3r)}${qcell(q4r)}
+    </tr>`;
+  }).join('');
+
+  // ファール分析（F率高い順）
+  const foulPlayers=[...players].filter(p=>p.gp>0).sort((a,b)=>b.avgF-a.avgF);
+  document.getElementById('foul-title').textContent=`ファール分析（${games.length}試合・F率高い順）`;
+  document.getElementById('foul-tbody').innerHTML=foulPlayers.map(p=>{
+    const totalQ=games.reduce((s,g)=>{const pl=g.players.find(x=>x.name===p.name);return s+(pl?pl.q.length:0);},0);
+    const fRate=totalQ>0?p.totalF/totalQ:0;
+    const fc=fRate>=0.5?'var(--red)':fRate>=0.3?'var(--gold)':'var(--green)';
+    const label=fRate>=0.5?'⚠️ 要注意':fRate>=0.3?'△ 観察中':'○ 良好';
+    return `<tr>
+      <td style="color:var(--muted)">${p.no}</td>
+      <td>${esc(p.name)}</td>
+      <td>${p.gp}/${games.length}</td>
+      <td style="color:${fc};font-weight:700">${p.totalF}</td>
+      <td style="color:${fc}">${F1(p.avgF)}</td>
+      <td style="color:${fc};font-weight:700">${(fRate*100).toFixed(0)}%</td>
+      <td style="color:${fc};font-size:11px">${label}</td>
+    </tr>`;
+  }).join('');
+
+  // Q別出場率
+  document.getElementById('qapp').innerHTML=players.map(p=>`<tr>
+    <td style="color:var(--muted)">${p.no}</td>
+    <td>${esc(p.name)}</td>
+    <td style="color:${rc(p.q1r)};font-weight:700">${p.q1r}%</td>
+    <td style="color:${rc(p.q2r)};font-weight:700">${p.q2r}%</td>
+    <td style="color:${rc(p.q3r)};font-weight:700">${p.q3r}%</td>
+    <td style="color:${rc(p.q4r)};font-weight:700">${p.q4r}%</td>
+  </tr>`).join('');
+
+  // Q別チームスコア
+  document.getElementById('qscore').innerHTML=games.map((g,i)=>{
+    const us=ourT[i],them=oppT[i],win=us>them;
+    const col=win?'var(--green)':'var(--red)';
+    return `<tr>
+      <td style="color:var(--muted)">G${i+1}</td>
+      <td style="text-align:left;font-size:11px">${esc(g.opponent)}</td>
+      ${g.our.map((q,qi)=>{const d=q-g.opp[qi];return `<td style="color:${d>0?'var(--green)':d<0?'var(--red)':'var(--sub)'}">${q}<span style="color:var(--muted);font-size:9px">(${d>=0?'+':''}${d})</span></td>`;}).join('')}
+      <td style="color:${col};font-weight:700">${us}-${them}</td>
+      <td><span class="pill" style="color:${col};background:${col}20;border-color:${col}40">${win?'勝':'負'}</span></td>
+    </tr>`;
+  }).join('');
+
+}
+
+function setFilter(v,btn){
+  curFilter=v;
+  document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  render();
+}
+function setTab(v,btn){
+  document.querySelectorAll('.tbtn').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('panel-'+v).classList.add('on');
+}
+render();
+</script>
+</body>
+</html>
