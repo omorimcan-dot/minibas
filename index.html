@@ -310,7 +310,6 @@ function buildPlayers(games){
   const m={};
   games.forEach(g=>{
     g.players.forEach(p=>{
-      if(!p.q.length && p.pts===0 && p.f===0) return;
       if(!m[p.name]) m[p.name]={name:p.name,no:p.no,gp:0,totalQ:0,totalF:0,totalPts:0,q1:0,q2:0,q3:0,q4:0};
       if(p.q.length>0) m[p.name].gp++;
       m[p.name].totalQ+=p.q.length;
