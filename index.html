@@ -43,7 +43,16 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Sans','Noto Sa
 .qcol{flex:1;padding:8px 0;border-right:1px solid var(--border);text-align:center;}
 .qcol:last-child{border-right:none;}
 .glist{display:flex;flex-direction:column;gap:7px;}
-.gcard{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:11px 13px;border-left-width:3px;border-left-style:solid;}
+.gcard{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:11px 13px;border-left-width:3px;border-left-style:solid;cursor:pointer;}
+.gcard-detail{display:none;margin-top:10px;border-top:1px solid var(--border);padding-top:10px;}
+.gcard-detail.open{display:block;}
+.gcard-detail table{font-size:11px;}
+.gcard-detail th{color:var(--muted);padding:4px 6px;font-weight:500;border-bottom:1px solid var(--border);text-align:right;}
+.gcard-detail th:nth-child(2){text-align:left;}
+.gcard-detail td{padding:5px 6px;text-align:right;border-bottom:1px solid rgba(42,58,82,.3);}
+.gcard-detail td:nth-child(2){text-align:left;}
+.gcard-detail tr:last-child td{border-bottom:none;}
+.expand-icon{color:var(--muted);font-size:12px;margin-left:6px;}
 .pill{border-radius:4px;padding:1px 7px;font-size:11px;font-weight:700;border-width:1px;border-style:solid;display:inline-block;}
 .pbox{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px;overflow-x:auto;}
 table{width:100%;border-collapse:collapse;font-size:11px;}
@@ -434,18 +443,34 @@ function render(){
   }).join('');
 
   // 試合一覧
-  document.getElementById('glist').innerHTML=[...games].sort((a,b)=>a.date.localeCompare(b.date)).map(g=>{
+  document.getElementById('glist').innerHTML=[...games].sort((a,b)=>a.date.localeCompare(b.date)).map((g,gi)=>{
     const us=S(g.our),them=S(g.opp),win=us>them;
     const col=win?'var(--green)':'var(--red)';
-    const top3=g.players.filter(p=>p.pts>0).sort((a,b)=>b.pts-a.pts).slice(0,3).map(p=>`${p.no}番 ${p.pts}点`).join('　');
-    return `<div class="gcard" style="border-left-color:${col}">
+    const activePlayers=g.players.filter(p=>p.q.length>0||p.pts>0||p.f>0).sort((a,b)=>b.pts-a.pts);
+    const playerRows=activePlayers.map(p=>{
+      const fc=p.f>=3?'var(--red)':p.f>=2?'var(--gold)':'var(--sub)';
+      const pc=p.pts>=10?'var(--gold)':p.pts>0?'var(--green)':'var(--muted)';
+      return `<tr>
+        <td style="color:var(--muted)">${p.no}</td>
+        <td>${esc(p.name)}</td>
+        <td style="color:${pc};font-weight:${p.pts>=10?700:400}">${p.pts}点</td>
+        <td style="color:${fc}">${p.f}F</td>
+        <td style="color:var(--muted);font-size:10px">Q${p.q.join(',')}</td>
+      </tr>`;
+    }).join('');
+    return `<div class="gcard" style="border-left-color:${col}" onclick="toggleDetail(this)">
       <div style="display:flex;align-items:center;gap:9px">
         <span class="pill" style="color:${col};background:${col}20;border-color:${col}40">${win?'勝':'負'}</span>
         <div style="flex:1">
-          <div style="color:var(--text);font-size:13px;font-weight:700">vs ${esc(g.opponent)}<span style="color:var(--muted);font-weight:400;font-size:11px;margin-left:6px">${g.tournament}　${g.date}</span></div>
+          <div style="color:var(--text);font-size:13px;font-weight:700">vs ${esc(g.opponent)}<span style="color:var(--muted);font-weight:400;font-size:11px;margin-left:6px">${g.tournament}　${g.date}</span><span class="expand-icon">▼</span></div>
           <div style="color:var(--muted);font-size:12px;margin-top:3px">${g.our.join(' - ')} ＝ <span style="color:${col};font-weight:700;font-size:13px">${us}</span><span style="margin:0 6px;color:var(--border)">|</span>相手 ${g.opp.join(' - ')} ＝ ${them}</div>
-          ${top3?`<div style="color:var(--sub);font-size:11px;margin-top:3px">🏀 ${top3}</div>`:''}
         </div>
+      </div>
+      <div class="gcard-detail">
+        <table>
+          <thead><tr><th>#</th><th>選手名</th><th>得点</th><th>F</th><th>出場Q</th></tr></thead>
+          <tbody>${playerRows}</tbody>
+        </table>
       </div>
     </div>`;
   }).join('');
@@ -530,6 +555,12 @@ function render(){
 
 }
 
+function toggleDetail(card){
+  const detail=card.querySelector('.gcard-detail');
+  const icon=card.querySelector('.expand-icon');
+  detail.classList.toggle('open');
+  icon.textContent=detail.classList.contains('open')?'▲':'▼';
+}
 function setFilter(v,btn){
   curFilter=v;
   document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on'));
