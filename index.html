@@ -85,6 +85,7 @@ tr:nth-child(even){background:rgba(17,24,39,.4);}
     <button class="tbtn" onclick="setTab('scoring',this)">得点分析</button>
     <button class="tbtn" onclick="setTab('fouls',this)">ファール分析</button>
     <button class="tbtn" onclick="setTab('qana',this)">Q別分析</button>
+    <button class="tbtn" onclick="setTab('analysis',this)">詳細分析</button>
   </div>
 
   <div id="panel-dash" class="panel on">
@@ -137,7 +138,36 @@ tr:nth-child(even){background:rgba(17,24,39,.4);}
     </div>
   </div>
 
-  <div id="panel-qana" class="panel">
+  <div id="panel-analysis" class="panel">
+    <div class="pbox">
+      <div class="ctitle">Q別 得失点差（全試合合計）</div>
+      <table>
+        <thead><tr><th>Q</th><th>総得点</th><th>総失点</th><th>得失点差</th><th>平均得点</th><th>Q勝率</th></tr></thead>
+        <tbody id="q-diff-tbody"></tbody>
+      </table>
+    </div>
+    <div class="pbox">
+      <div class="ctitle">大会別成績</div>
+      <table>
+        <thead><tr><th>大会</th><th>試合</th><th>勝敗</th><th>勝率</th><th>平均得点</th><th>平均失点</th></tr></thead>
+        <tbody id="tournament-tbody"></tbody>
+      </table>
+    </div>
+    <div class="pbox">
+      <div class="ctitle">月別勝率推移</div>
+      <table>
+        <thead><tr><th>月</th><th>試合</th><th>勝敗</th><th>勝率</th></tr></thead>
+        <tbody id="monthly-tbody"></tbody>
+      </table>
+    </div>
+    <div class="pbox">
+      <div class="ctitle">複数回対戦相手</div>
+      <table>
+        <thead><tr><th>相手</th><th>対戦数</th><th>勝敗</th><th>平均得点</th><th>平均失点</th></tr></thead>
+        <tbody id="rival-tbody"></tbody>
+      </table>
+    </div>
+  </div>
     <div class="pbox">
       <div class="ctitle">Q別 出場率</div>
       <table>
@@ -830,7 +860,96 @@ function render(){
   }).join('');
 
   // Q別出場率
-  document.getElementById('qapp').innerHTML=players.map(p=>`<tr>
+  // 詳細分析
+  // Q別得失点差
+  document.getElementById('q-diff-tbody').innerHTML=[0,1,2,3].map(q=>{
+    const os=S(games.map(g=>g.our[q]));
+    const op=S(games.map(g=>g.opp[q]));
+    const d=os-op;
+    const qwins=games.filter(g=>g.our[q]>g.opp[q]).length;
+    const dc=d>=0?'var(--green)':'var(--red)';
+    const wc=rateColor(PCT(qwins,games.length));
+    return `<tr>
+      <td style="color:var(--text);font-weight:700">Q${q+1}</td>
+      <td style="color:var(--green)">${os}</td>
+      <td style="color:var(--muted)">${op}</td>
+      <td style="color:${dc};font-weight:700">${d>=0?'+':''}${d}</td>
+      <td>${F1(os/games.length)}</td>
+      <td style="color:${wc};font-weight:700">${qwins}勝${games.length-qwins}敗</td>
+    </tr>`;
+  }).join('');
+
+  // 大会別
+  const tMap={};
+  games.forEach(g=>{
+    if(!tMap[g.tournament]) tMap[g.tournament]={w:0,l:0,pts:[],opp:[]};
+    const us=S(g.our),them=S(g.opp);
+    if(us>them) tMap[g.tournament].w++; else tMap[g.tournament].l++;
+    tMap[g.tournament].pts.push(us);
+    tMap[g.tournament].opp.push(them);
+  });
+  document.getElementById('tournament-tbody').innerHTML=Object.entries(tMap)
+    .sort((a,b)=>b[1].w-a[1].w)
+    .map(([t,d])=>{
+      const total=d.w+d.l;
+      const wr=PCT(d.w,total);
+      const wc=rateColor(wr);
+      const avgP=F1(AVG(d.pts));
+      const avgO=F1(AVG(d.opp));
+      return `<tr>
+        <td style="text-align:left;font-weight:600">${esc(t)}</td>
+        <td>${total}</td>
+        <td style="color:${wc}">${d.w}勝${d.l}敗</td>
+        <td style="color:${wc};font-weight:700">${wr}%</td>
+        <td style="color:var(--green)">${avgP}</td>
+        <td style="color:var(--muted)">${avgO}</td>
+      </tr>`;
+    }).join('');
+
+  // 月別
+  const mMap={};
+  games.forEach(g=>{
+    const m=g.date.slice(0,7);
+    if(!mMap[m]) mMap[m]={w:0,l:0};
+    if(S(g.our)>S(g.opp)) mMap[m].w++; else mMap[m].l++;
+  });
+  document.getElementById('monthly-tbody').innerHTML=Object.entries(mMap)
+    .sort((a,b)=>a[0].localeCompare(b[0]))
+    .map(([m,d])=>{
+      const total=d.w+d.l;
+      const wr=PCT(d.w,total);
+      const wc=rateColor(wr);
+      return `<tr>
+        <td style="text-align:left;font-weight:600">${m}</td>
+        <td>${total}</td>
+        <td style="color:${wc}">${d.w}勝${d.l}敗</td>
+        <td style="color:${wc};font-weight:700">${wr}%</td>
+      </tr>`;
+    }).join('');
+
+  // 複数回対戦
+  const oMap={};
+  games.forEach(g=>{
+    if(!oMap[g.opponent]) oMap[g.opponent]={w:0,l:0,pts:[],opp:[]};
+    const us=S(g.our),them=S(g.opp);
+    if(us>them) oMap[g.opponent].w++; else oMap[g.opponent].l++;
+    oMap[g.opponent].pts.push(us);
+    oMap[g.opponent].opp.push(them);
+  });
+  document.getElementById('rival-tbody').innerHTML=Object.entries(oMap)
+    .filter(([o,d])=>d.w+d.l>=2)
+    .sort((a,b)=>(b[1].w+b[1].l)-(a[1].w+a[1].l))
+    .map(([o,d])=>{
+      const total=d.w+d.l;
+      const wc=rateColor(PCT(d.w,total));
+      return `<tr>
+        <td style="text-align:left;font-weight:600">${esc(o)}</td>
+        <td>${total}</td>
+        <td style="color:${wc}">${d.w}勝${d.l}敗</td>
+        <td style="color:var(--green)">${F1(AVG(d.pts))}</td>
+        <td style="color:var(--muted)">${F1(AVG(d.opp))}</td>
+      </tr>`;
+    }).join('');
     <td style="color:var(--muted)">${p.no}</td>
     <td>${esc(p.name)}</td>
     <td style="color:${rc(p.q1r)};font-weight:700">${p.q1r}%</td>
