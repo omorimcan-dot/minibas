@@ -951,6 +951,8 @@ function render(){
         <td style="color:var(--muted)">${F1(AVG(d.opp))}</td>
       </tr>`;
     }).join('');
+
+  document.getElementById('qapp').innerHTML=players.map(p=>`<tr>
     <td style="color:var(--muted)">${p.no}</td>
     <td>${esc(p.name)}</td>
     <td style="color:${rc(p.q1r)};font-weight:700">${p.q1r}%</td>
