@@ -764,7 +764,7 @@ function render(){
 
   // Qチャート
   const qAvg=[0,1,2,3].map(q=>({q:q+1,our:AVG(games.map(g=>g.our[q])),opp:AVG(games.map(g=>g.opp[q]))}));
-  const maxQ=Math.max(...qAvg.flatMap(q=>[q.our,q.opp]),1);
+  const maxQ=Math.max(...qAvg.map(q=>q.our).concat(qAvg.map(q=>q.opp)),1);
   document.getElementById('qchart').innerHTML=qAvg.map(q=>`
     <div class="bgrp">
       <div class="bars">
