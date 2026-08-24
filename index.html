@@ -27,20 +27,20 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Sans','Noto Sa
 .ksub{color:var(--muted);font-size:11px;margin-top:3px;}
 .charts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
 @media(max-width:500px){.charts{grid-template-columns:1fr;}}
-.cbox{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;}
+.cbox{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;min-width:0;overflow-x:auto;}
 .ctitle{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;}
-.barwrap{display:flex;gap:14px;align-items:flex-end;height:100px;}
-.bgrp{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.barwrap{display:flex;gap:8px;align-items:flex-end;height:100px;}
+.bgrp{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:3px;}
 .bars{display:flex;gap:3px;align-items:flex-end;height:74px;}
 .bar{border-radius:3px 3px 0 0;min-height:2px;}
 .leg{display:flex;gap:12px;margin-top:8px;}
 .legitem{display:flex;align-items:center;gap:5px;color:var(--muted);font-size:11px;}
 .legdot{width:8px;height:8px;border-radius:2px;}
-.trendwrap{display:flex;gap:4px;align-items:flex-end;height:100px;}
-.tcol{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;}
-.qdtl{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px;}
-.qcols{display:flex;}
-.qcol{flex:1;padding:8px 0;border-right:1px solid var(--border);text-align:center;}
+.trendwrap{display:flex;gap:4px;align-items:flex-end;height:100px;overflow-x:auto;padding-bottom:2px;}
+.tcol{flex:0 0 auto;min-width:24px;display:flex;flex-direction:column;align-items:center;gap:2px;}
+.qdtl{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px;overflow-x:auto;}
+.qcols{display:flex;min-width:min-content;}
+.qcol{flex:1;min-width:62px;padding:8px 0;border-right:1px solid var(--border);text-align:center;}
 .qcol:last-child{border-right:none;}
 .glist{display:flex;flex-direction:column;gap:7px;}
 .gcard{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:11px 13px;border-left-width:3px;border-left-style:solid;cursor:pointer;}
